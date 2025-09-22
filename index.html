@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ตัวช่วยบันทึกรายรับ‑รายจ่าย</title>
+  <meta name="description" content="เว็บแอพรอบคอบสำหรับบันทึกรายรับ‑รายจ่าย เก็บข้อมูลบนเครื่องคุณ พร้อมสรุปรายเดือน กราฟ และส่งออกไฟล์" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>ตัวช่วยบันทึกรายรับ‑รายจ่าย</h1>
+    <div class="balance">
+      ยอดคงเหลือ: <strong id="balance">฿0.00</strong>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel add-form" aria-labelledby="form-title">
+      <h2 id="form-title">เพิ่มรายการ</h2>
+      <form id="txForm">
+        <div class="row">
+          <label for="type">ประเภท</label>
+          <select id="type" name="type" required>
+            <option value="income">รายรับ</option>
+            <option value="expense">รายจ่าย</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label for="amount">จำนวนเงิน (บาท)</label>
+          <input id="amount" name="amount" type="number" step="0.01" min="0" required placeholder="เช่น 150.00" />
+        </div>
+
+        <div class="row">
+          <label for="category">หมวดหมู่</label>
+          <select id="category" name="category" required>
+            <!-- เติมโดย JS -->
+          </select>
+        </div>
+
+        <div class="row two">
+          <div>
+            <label for="date">วันที่</label>
+            <input id="date" name="date" type="date" required />
+          </div>
+          <div>
+            <label for="note">บันทึก/คำอธิบาย</label>
+            <input id="note" name="note" placeholder="ระบุสั้น ๆ" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">บันทึก</button>
+          <button type="button" id="resetForm" class="btn">ล้างฟอร์ม</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel filters" aria-labelledby="filter-title">
+      <h2 id="filter-title">ตัวกรอง</h2>
+      <div class="row two">
+        <div>
+          <label for="month">เดือน</label>
+          <input id="month" type="month" />
+        </div>
+        <div>
+          <label for="filterCategory">หมวดหมู่</label>
+          <select id="filterCategory">
+            <option value="">ทั้งหมด</option>
+          </select>
+        </div>
+      </div>
+      <div class="row two">
+        <div>
+          <label for="search">ค้นหา</label>
+          <input id="search" placeholder="คำค้นในบันทึก/หมวดหมู่" />
+        </div>
+        <div class="actions">
+          <button id="clearFilters" class="btn">ล้างตัวกรอง</button>
+          <button id="exportCSV" class="btn">ส่งออก CSV</button>
+          <button id="exportJSON" class="btn">ส่งออก JSON</button>
+          <label class="btn file">
+            นำเข้าไฟล์
+            <input id="importFile" type="file" accept=".json,.csv" hidden />
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel chart" aria-labelledby="chart-title">
+      <h2 id="chart-title">สรุปรายเดือน</h2>
+      <canvas id="summaryChart" height="170" aria-label="กราฟสรุปรายเดือน"></canvas>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="panel list" aria-labelledby="list-title">
+      <h2 id="list-title">รายการ</h2>
+      <ul id="txList" class="tx-list" aria-live="polite"></ul>
+      <div id="emptyState" class="empty">ยังไม่มีรายการ ลองเพิ่มด้านบนได้เลย</div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>ข้อมูลของคุณถูกเก็บไว้ในอุปกรณ์นี้ (Local Storage) | ทำโดย ChatGPT</small>
+  </footer>
+
+  <template id="txItemTemplate">
+    <li class="tx-item">
+      <div class="left">
+        <div class="title">
+          <span class="badge" data-type></span>
+          <strong class="note"></strong>
+        </div>
+        <div class="meta">
+          <span class="cat"></span>
+          <span class="date"></span>
+        </div>
+      </div>
+      <div class="right">
+        <span class="amount"></span>
+        <button class="icon edit" title="แก้ไข" aria-label="แก้ไขรายการ">✏️</button>
+        <button class="icon delete" title="ลบ" aria-label="ลบรายการ">🗑️</button>
+      </div>
+    </li>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
